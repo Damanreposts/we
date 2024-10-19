@@ -14,6 +14,10 @@ toggleButton.TextColor3 = Color3.new(1, 1, 1) -- White text
 toggleButton.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
 toggleButton.Parent = screenGui
 
+-- Add UI corners to the toggle button
+local toggleUICorner = Instance.new("UICorner")
+toggleUICorner.Parent = toggleButton
+
 -- Create the GUI frame
 local guiFrame = Instance.new("Frame")
 guiFrame.Size = UDim2.new(0, 300, 0, 200)
@@ -51,6 +55,10 @@ executeButton.TextColor3 = Color3.new(1, 1, 1) -- White text
 executeButton.BackgroundColor3 = Color3.new(0, 0.6, 0) -- Green background
 executeButton.Parent = guiFrame
 
+-- Add UI corners to the Execute button
+local executeUICorner = Instance.new("UICorner")
+executeUICorner.Parent = executeButton
+
 -- Create the Clear button
 local clearButton = Instance.new("TextButton")
 clearButton.Size = UDim2.new(0, 90, 0, 40)
@@ -59,6 +67,10 @@ clearButton.Text = "Clear"
 clearButton.TextColor3 = Color3.new(1, 1, 1) -- White text
 clearButton.BackgroundColor3 = Color3.new(0.6, 0, 0) -- Red background
 clearButton.Parent = guiFrame
+
+-- Add UI corners to the Clear button
+local clearUICorner = Instance.new("UICorner")
+clearUICorner.Parent = clearButton
 
 -- Create the Copy button
 local copyButton = Instance.new("TextButton")
@@ -69,16 +81,19 @@ copyButton.TextColor3 = Color3.new(1, 1, 1) -- White text
 copyButton.BackgroundColor3 = Color3.new(0, 0, 0.6) -- Blue background
 copyButton.Parent = guiFrame
 
--- Create a footer label at the bottom right of the screen
+-- Add UI corners to the Copy button
+local copyUICorner = Instance.new("UICorner")
+copyUICorner.Parent = copyButton
+
+-- Create a footer label below the buttons
 local footerLabel = Instance.new("TextLabel")
-footerLabel.Size = UDim2.new(0, 200, 0, 30) -- Width set to 200, height to 30
-footerLabel.Position = UDim2.new(1, -210, 1, -40) -- Bottom right corner with padding
+footerLabel.Size = UDim2.new(1, -20, 0, 30) -- Full width minus padding
+footerLabel.Position = UDim2.new(0, 10, 0, 160) -- Below the buttons
 footerLabel.Text = "Made by lolcatfan09 V3"
 footerLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
 footerLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
 footerLabel.TextScaled = true -- Scale text to fit
-footerLabel.AnchorPoint = Vector2.new(1, 1) -- Anchor to the bottom right
-footerLabel.Parent = screenGui
+footerLabel.Parent = guiFrame
 
 -- Function to toggle the GUI visibility
 toggleButton.MouseButton1Click:Connect(function()
