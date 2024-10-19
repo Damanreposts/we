@@ -1,0 +1,44 @@
+local function onChat(message, player)
+    local prefix = "."
+
+    -- Check if the message starts with the specified prefix
+    if string.sub(message, 1, 1) == prefix then
+        local args = string.sub(message, 2)  -- Remove the prefix
+        local command, arg1, arg2 = args:match("(%w+)%s*(%w*)%s*(.*)")
+
+        if command == "GetAdmin" then
+            -- Teleport to the 'pad' model
+            local pad = game.Workspace:FindFirstChild("pad")
+            if pad and pad:IsA("Model") then
+                player.Character:MoveTo(pad.PrimaryPart.Position)
+            else
+                print("Error: 'pad' model not found.")
+            end
+
+        elseif command == "GiveAdmin" then
+            -- Assuming you want to execute a command like `;bring Username`
+            local username = arg1
+            if username then
+                local commandString = ';bring ' .. username
+                local success, err = pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/path/to/script.lua"))()
+                end)
+
+                if success then
+                    print("Loaded!")
+                else
+                    print("Error:", err)
+                end
+            else
+                print("Error: No username provided.")
+            end
+        end
+    end
+end
+
+-- Connect the function to the 'Chatted' event
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        onChat(message, player)
+    end)
+end)
