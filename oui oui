@@ -1,4 +1,4 @@
--- GitHub Loadstring Script for "Get All Tools" Button (Searches Everywhere)
+-- GitHub Loadstring Script for "Get All Tools" Button (Searches for 'Tools' Folder and Other Locations)
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -36,27 +36,42 @@ local function createGetAllToolsButton()
             end
         end
 
-        -- Search for tools in ReplicatedStorage
+        -- Helper function to search for a "Tools" folder in various locations
+        local function searchForToolsFolder(location)
+            local toolsFolder = location:FindFirstChild("Tools") or location:FindFirstChild("tools")
+            if toolsFolder then
+                for _, tool in pairs(toolsFolder:GetChildren()) do
+                    giveTool(tool)
+                end
+            end
+        end
+
+        -- Search for a "Tools" folder in ReplicatedStorage, ServerStorage, and Lighting
+        searchForToolsFolder(replicatedStorage)
+        searchForToolsFolder(serverStorage)
+        searchForToolsFolder(lighting)
+
+        -- Search for individual tools in ReplicatedStorage
         for _, item in pairs(replicatedStorage:GetDescendants()) do
             giveTool(item)
         end
 
-        -- Search for tools in StarterPack
+        -- Search for individual tools in StarterPack
         for _, item in pairs(starterPack:GetDescendants()) do
             giveTool(item)
         end
 
-        -- Search for tools in Lighting (sometimes used for storage)
+        -- Search for individual tools in Lighting (sometimes used for storage)
         for _, item in pairs(lighting:GetDescendants()) do
             giveTool(item)
         end
 
-        -- Search for tools in ServerStorage (if accessible from the client)
+        -- Search for individual tools in ServerStorage (if accessible from the client)
         for _, item in pairs(serverStorage:GetDescendants()) do
             giveTool(item)
         end
 
-        -- Search for tools in the player's Backpack or Character (in case any exist at the start)
+        -- Search for individual tools in the player's Backpack or Character (in case any exist at the start)
         for _, item in pairs(player.Backpack:GetDescendants()) do
             giveTool(item)
         end
