@@ -1,4 +1,4 @@
--- GitHub Loadstring Script
+-- GitHub Loadstring Script for Mobile
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -9,24 +9,32 @@ local function createGui()
     screenGui.Parent = player:WaitForChild("PlayerGui")
     screenGui.Name = "ToolGui"
 
-    -- Create the ScrollingFrame
-    local scrollingFrame = Instance.new("ScrollingFrame")
-    scrollingFrame.Size = UDim2.new(0, 300, 0, 200)
-    scrollingFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-    scrollingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    scrollingFrame.Parent = screenGui
-    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Update later when tools are added
-    scrollingFrame.ScrollBarThickness = 8 -- Add a scrollbar
+    -- Create the Frame to hold everything (smaller size for mobile)
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 250, 0, 300)  -- Smaller frame size
+    mainFrame.Position = UDim2.new(0.5, -125, 0.5, -150)
+    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    mainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    mainFrame.Parent = screenGui
+    mainFrame.BorderSizePixel = 0
 
-    -- Create the Update Button
+    -- Create the ScrollingFrame (for displaying tool buttons)
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Size = UDim2.new(1, 0, 0, 230)  -- Reduced size for mobile
+    scrollingFrame.Position = UDim2.new(0, 0, 0, 0)
+    scrollingFrame.Parent = mainFrame
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Update later when tools are added
+    scrollingFrame.ScrollBarThickness = 8 -- Mobile-friendly scrollbar
+
+    -- Create the Update Button (inside the main frame, at the bottom)
     local updateButton = Instance.new("TextButton")
-    updateButton.Size = UDim2.new(0, 100, 0, 50)
-    updateButton.Position = UDim2.new(0.5, -50, 1, -60)
-    updateButton.AnchorPoint = Vector2.new(0.5, 0)
+    updateButton.Size = UDim2.new(0, 120, 0, 40)
+    updateButton.Position = UDim2.new(0.5, -60, 1, -45)
+    updateButton.AnchorPoint = Vector2.new(0.5, 1)
     updateButton.Text = "Update"
     updateButton.TextColor3 = Color3.new(1, 1, 1)
     updateButton.BackgroundColor3 = Color3.new(0, 1, 0)
-    updateButton.Parent = screenGui
+    updateButton.Parent = mainFrame
 
     -- Function to populate the ScrollingFrame with tool buttons
     local function updateTools()
@@ -49,7 +57,7 @@ local function createGui()
         for _, tool in pairs(toolsFolder:GetChildren()) do
             if tool:IsA("Tool") then
                 local toolButton = Instance.new("TextButton")
-                toolButton.Size = UDim2.new(1, 0, 0, 50)
+                toolButton.Size = UDim2.new(1, 0, 0, 40)  -- Smaller buttons for mobile
                 toolButton.Position = UDim2.new(0, 0, 0, yOffset)
                 toolButton.Text = tool.Name
                 toolButton.Parent = scrollingFrame
@@ -60,7 +68,7 @@ local function createGui()
                     clonedTool.Parent = player.Backpack
                 end)
 
-                yOffset = yOffset + 50
+                yOffset = yOffset + 40 -- Adjust Y offset for the next button
             end
         end
 
