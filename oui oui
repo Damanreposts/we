@@ -1,7 +1,10 @@
--- Loadstring Template for GitHub: Save this as a Lua file on GitHub and use the raw link with loadstring()
+-- GitHub Loadstring Script
 
-local function createGui(player)
-    -- Create the ScreenGui
+local player = game.Players.LocalPlayer
+local replicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Create the GUI
+local function createGui()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player:WaitForChild("PlayerGui")
     screenGui.Name = "ToolGui"
@@ -12,7 +15,8 @@ local function createGui(player)
     scrollingFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
     scrollingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     scrollingFrame.Parent = screenGui
-    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Will be updated when tools are added
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Update later when tools are added
+    scrollingFrame.ScrollBarThickness = 8 -- Add a scrollbar
 
     -- Create the Update Button
     local updateButton = Instance.new("TextButton")
@@ -24,34 +28,33 @@ local function createGui(player)
     updateButton.BackgroundColor3 = Color3.new(0, 1, 0)
     updateButton.Parent = screenGui
 
-    -- Function to update tools in the ScrollingFrame
+    -- Function to populate the ScrollingFrame with tool buttons
     local function updateTools()
-        -- Clear any previous buttons
+        -- Clear existing buttons if any
         for _, child in pairs(scrollingFrame:GetChildren()) do
             if child:IsA("TextButton") then
                 child:Destroy()
             end
         end
         
-        -- Assume all tools are stored in a folder called "Tools" in ReplicatedStorage
-        local toolsFolder = game.ReplicatedStorage:FindFirstChild("Tools")
+        -- Fetch the tools from a folder in ReplicatedStorage called "Tools"
+        local toolsFolder = replicatedStorage:FindFirstChild("Tools")
         if not toolsFolder then
-            warn("Tools folder not found in ReplicatedStorage")
+            warn("No 'Tools' folder found in ReplicatedStorage")
             return
         end
 
-        -- Scan for tools and add buttons for each
+        -- Create buttons for each tool
         local yOffset = 0
         for _, tool in pairs(toolsFolder:GetChildren()) do
             if tool:IsA("Tool") then
-                -- Create a button for each tool
                 local toolButton = Instance.new("TextButton")
                 toolButton.Size = UDim2.new(1, 0, 0, 50)
                 toolButton.Position = UDim2.new(0, 0, 0, yOffset)
                 toolButton.Text = tool.Name
                 toolButton.Parent = scrollingFrame
 
-                -- When clicked, give the player the tool
+                -- Click to give the player the tool
                 toolButton.MouseButton1Click:Connect(function()
                     local clonedTool = tool:Clone()
                     clonedTool.Parent = player.Backpack
@@ -61,22 +64,15 @@ local function createGui(player)
             end
         end
 
-        -- Update the canvas size for scrolling
+        -- Update the canvas size for the scrolling frame
         scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
     end
 
-    -- Connect the Update Button to the function
+    -- Connect Update button to populate the tools
     updateButton.MouseButton1Click:Connect(function()
-        updateTools()
-        updateButton:Destroy() -- Remove the button after updating tools
+        updateTools() -- Load or refresh tools whenever the button is clicked
     end)
 end
 
--- Main Script
-local Players = game:GetService("Players")
-Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
-        createGui(player)
-    end)
-end)
-
+-- Initialize the GUI on script run
+createGui()
