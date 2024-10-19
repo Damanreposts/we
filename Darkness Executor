@@ -1,132 +1,120 @@
 -- Loadstring Executor GUI Script
 
 local player = game.Players.LocalPlayer
-local replicatedStorage = game:GetService("ReplicatedStorage")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.Name = "ExecutorGui"
 
--- Create the main GUI if it does not already exist
-local screenGui = replicatedStorage:FindFirstChild("ExecutorGui")
-if not screenGui then
-    screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "ExecutorGui"
+-- Create the main button to open/close the GUI
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 100, 0, 50)
+toggleButton.Position = UDim2.new(0, 10, 0.5, -25) -- Left middle side
+toggleButton.Text = "Open"
+toggleButton.TextColor3 = Color3.new(1, 1, 1) -- White text
+toggleButton.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
+toggleButton.Parent = screenGui
 
-    -- Create the main button to open/close the GUI
-    local toggleButton = Instance.new("TextButton")
-    toggleButton.Size = UDim2.new(0, 100, 0, 50)
-    toggleButton.Position = UDim2.new(0, 10, 0.5, -25) -- Left middle side
-    toggleButton.Text = "Open"
-    toggleButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-    toggleButton.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
-    toggleButton.Parent = screenGui
+-- Add UI corners to the toggle button
+local toggleUICorner = Instance.new("UICorner")
+toggleUICorner.Parent = toggleButton
 
-    -- Add UI corners to the toggle button
-    local toggleUICorner = Instance.new("UICorner")
-    toggleUICorner.Parent = toggleButton
+-- Create the GUI frame
+local guiFrame = Instance.new("Frame")
+guiFrame.Size = UDim2.new(0, 300, 0, 200)
+guiFrame.Position = UDim2.new(0.5, -150, 0.5, -100) -- Centered position
+guiFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
+guiFrame.Visible = false -- Initially hidden
+guiFrame.Parent = screenGui
 
-    -- Create the GUI frame
-    local guiFrame = Instance.new("Frame")
-    guiFrame.Size = UDim2.new(0, 300, 0, 200)
-    guiFrame.Position = UDim2.new(0.5, -150, 0.5, -100) -- Centered position
-    guiFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
-    guiFrame.Visible = false -- Initially hidden
-    guiFrame.Parent = screenGui
+-- Create a title label inside the GUI
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -20, 0, 30) -- Full width minus padding
+titleLabel.Position = UDim2.new(0, 10, 0, 10) -- Padding from the top
+titleLabel.Text = "Darkness Executor"
+titleLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
+titleLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
+titleLabel.TextScaled = true -- Scale text to fit
+titleLabel.Parent = guiFrame
 
-    -- Create a title label inside the GUI
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, -20, 0, 30) -- Full width minus padding
-    titleLabel.Position = UDim2.new(0, 10, 0, 10) -- Padding from the top
-    titleLabel.Text = "Darkness Executor"
-    titleLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
-    titleLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
-    titleLabel.TextScaled = true -- Scale text to fit
-    titleLabel.Parent = guiFrame
+-- Create the textbox for entering scripts
+local scriptTextbox = Instance.new("TextBox")
+scriptTextbox.Size = UDim2.new(1, -20, 0, 50) -- Full width minus padding
+scriptTextbox.Position = UDim2.new(0, 10, 0, 50) -- Below the title
+scriptTextbox.Text = "Enter script here"
+scriptTextbox.TextColor3 = Color3.new(1, 1, 1) -- White text
+scriptTextbox.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) -- Dark grey background
+scriptTextbox.ClearTextOnFocus = false -- Keep text when focused
+scriptTextbox.Parent = guiFrame
 
-    -- Create the textbox for entering scripts
-    local scriptTextbox = Instance.new("TextBox")
-    scriptTextbox.Size = UDim2.new(1, -20, 0, 50) -- Full width minus padding
-    scriptTextbox.Position = UDim2.new(0, 10, 0, 50) -- Below the title
-    scriptTextbox.Text = "Enter script here"
-    scriptTextbox.TextColor3 = Color3.new(1, 1, 1) -- White text
-    scriptTextbox.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) -- Dark grey background
-    scriptTextbox.ClearTextOnFocus = false -- Keep text when focused
-    scriptTextbox.Parent = guiFrame
+-- Create the Execute button
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0, 90, 0, 40)
+executeButton.Position = UDim2.new(0, 10, 0, 110) -- Below the textbox
+executeButton.Text = "Execute"
+executeButton.TextColor3 = Color3.new(1, 1, 1) -- White text
+executeButton.BackgroundColor3 = Color3.new(0, 0.6, 0) -- Green background
+executeButton.Parent = guiFrame
 
-    -- Create the Execute button
-    local executeButton = Instance.new("TextButton")
-    executeButton.Size = UDim2.new(0, 90, 0, 40)
-    executeButton.Position = UDim2.new(0, 10, 0, 110) -- Below the textbox
-    executeButton.Text = "Execute"
-    executeButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-    executeButton.BackgroundColor3 = Color3.new(0, 0.6, 0) -- Green background
-    executeButton.Parent = guiFrame
+-- Add UI corners to the Execute button
+local executeUICorner = Instance.new("UICorner")
+executeUICorner.Parent = executeButton
 
-    -- Add UI corners to the Execute button
-    local executeUICorner = Instance.new("UICorner")
-    executeUICorner.Parent = executeButton
+-- Create the Clear button
+local clearButton = Instance.new("TextButton")
+clearButton.Size = UDim2.new(0, 90, 0, 40)
+clearButton.Position = UDim2.new(0, 110, 0, 110) -- Next to Execute button
+clearButton.Text = "Clear"
+clearButton.TextColor3 = Color3.new(1, 1, 1) -- White text
+clearButton.BackgroundColor3 = Color3.new(0.6, 0, 0) -- Red background
+clearButton.Parent = guiFrame
 
-    -- Create the Clear button
-    local clearButton = Instance.new("TextButton")
-    clearButton.Size = UDim2.new(0, 90, 0, 40)
-    clearButton.Position = UDim2.new(0, 110, 0, 110) -- Next to Execute button
-    clearButton.Text = "Clear"
-    clearButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-    clearButton.BackgroundColor3 = Color3.new(0.6, 0, 0) -- Red background
-    clearButton.Parent = guiFrame
+-- Add UI corners to the Clear button
+local clearUICorner = Instance.new("UICorner")
+clearUICorner.Parent = clearButton
 
-    -- Add UI corners to the Clear button
-    local clearUICorner = Instance.new("UICorner")
-    clearUICorner.Parent = clearButton
+-- Create the Copy button
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0, 90, 0, 40)
+copyButton.Position = UDim2.new(0, 210, 0, 110) -- Next to Clear button
+copyButton.Text = "Copy"
+copyButton.TextColor3 = Color3.new(1, 1, 1) -- White text
+copyButton.BackgroundColor3 = Color3.new(0, 0, 0.6) -- Blue background
+copyButton.Parent = guiFrame
 
-    -- Create the Copy button
-    local copyButton = Instance.new("TextButton")
-    copyButton.Size = UDim2.new(0, 90, 0, 40)
-    copyButton.Position = UDim2.new(0, 210, 0, 110) -- Next to Clear button
-    copyButton.Text = "Copy"
-    copyButton.TextColor3 = Color3.new(1, 1, 1) -- White text
-    copyButton.BackgroundColor3 = Color3.new(0, 0, 0.6) -- Blue background
-    copyButton.Parent = guiFrame
+-- Add UI corners to the Copy button
+local copyUICorner = Instance.new("UICorner")
+copyUICorner.Parent = copyButton
 
-    -- Add UI corners to the Copy button
-    local copyUICorner = Instance.new("UICorner")
-    copyUICorner.Parent = copyButton
+-- Create a footer label below the buttons
+local footerLabel = Instance.new("TextLabel")
+footerLabel.Size = UDim2.new(1, -20, 0, 30) -- Full width minus padding
+footerLabel.Position = UDim2.new(0, 10, 0, 160) -- Below the buttons
+footerLabel.Text = "Made by lolcatfan09 V3"
+footerLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
+footerLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
+footerLabel.TextScaled = true -- Scale text to fit
+footerLabel.Parent = guiFrame
 
-    -- Create a footer label below the buttons
-    local footerLabel = Instance.new("TextLabel")
-    footerLabel.Size = UDim2.new(1, -20, 0, 30) -- Full width minus padding
-    footerLabel.Position = UDim2.new(0, 10, 0, 160) -- Below the buttons
-    footerLabel.Text = "Made by lolcatfan09 V3"
-    footerLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
-    footerLabel.BackgroundColor3 = Color3.new(0, 0, 0) -- Black background
-    footerLabel.TextScaled = true -- Scale text to fit
-    footerLabel.Parent = guiFrame
+-- Function to toggle the GUI visibility
+toggleButton.MouseButton1Click:Connect(function()
+    guiFrame.Visible = not guiFrame.Visible -- Toggle visibility
+    toggleButton.Text = guiFrame.Visible and "Close" or "Open" -- Change button text
+end)
 
-    -- Function to toggle the GUI visibility
-    toggleButton.MouseButton1Click:Connect(function()
-        guiFrame.Visible = not guiFrame.Visible -- Toggle visibility
-        toggleButton.Text = guiFrame.Visible and "Close" or "Open" -- Change button text
-    end)
+-- Function to execute the script from the textbox
+executeButton.MouseButton1Click:Connect(function()
+    local scriptToExecute = scriptTextbox.Text
+    if scriptToExecute and scriptToExecute ~= "" then
+        loadstring(scriptToExecute)() -- Execute the loadstring script
+    end
+end)
 
-    -- Function to execute the script from the textbox
-    executeButton.MouseButton1Click:Connect(function()
-        local scriptToExecute = scriptTextbox.Text
-        if scriptToExecute and scriptToExecute ~= "" then
-            loadstring(scriptToExecute)() -- Execute the loadstring script
-        end
-    end)
+-- Function to clear the textbox
+clearButton.MouseButton1Click:Connect(function()
+    scriptTextbox.Text = "" -- Clear the text
+end)
 
-    -- Function to clear the textbox
-    clearButton.MouseButton1Click:Connect(function()
-        scriptTextbox.Text = "" -- Clear the text
-    end)
-
-    -- Function to copy text from the textbox
-    copyButton.MouseButton1Click:Connect(function()
-        setclipboard(scriptTextbox.Text) -- Copy the text to clipboard
-    end)
-
-    -- Store the GUI in ReplicatedStorage
-    screenGui.Parent = replicatedStorage
-end
-
--- Clone the GUI to the PlayerGui when the player joins or respawns
-local playerGui = player:WaitForChild("PlayerGui")
-screenGui:Clone().Parent = playerGui
+-- Function to copy text from the textbox
+copyButton.MouseButton1Click:Connect(function()
+    setclipboard(scriptTextbox.Text) -- Copy the text to clipboard
+end)
