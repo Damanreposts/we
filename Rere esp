@@ -1,74 +1,42 @@
--- Store the original properties of each player's character parts
-local originalProperties = {}
-
--- Function to make all players visible through walls (turn red + adjust transparency)
-local function turnPlayersVisibleThroughWalls()
+-- Function to make player usernames visible from any distance
+local function showUsernamesFromAnyDistance()
     for _, player in pairs(game.Players:GetPlayers()) do
         if player.Character then
-            for _, part in pairs(player.Character:GetChildren()) do
-                if part:IsA("BasePart") then
-                    -- Save original properties if not already saved
-                    if not originalProperties[player] then
-                        originalProperties[player] = {}
-                    end
-                    originalProperties[player][part] = {
-                        Color = part.Color,
-                        Transparency = part.Transparency,
-                        Material = part.Material,
-                        LocalTransparencyModifier = part.LocalTransparencyModifier
-                    }
-
-                    -- Change the properties to make them visible through walls
-                    part.Color = Color3.new(1, 0, 0)  -- Red color
-                    part.Transparency = 0  -- Fully visible
-                    part.Material = Enum.Material.ForceField  -- Easier to see
-                    part.LocalTransparencyModifier = 0  -- Override local transparency
+            -- Look for the 'BillboardGui' inside the player's head
+            local head = player.Character:FindFirstChild("Head")
+            if head then
+                local billboardGui = head:FindFirstChildOfClass("BillboardGui")
+                if billboardGui then
+                    -- Set the MaxDistance to a very high value to make the username visible from anywhere
+                    billboardGui.MaxDistance = math.huge -- Infinite distance
                 end
             end
         end
     end
 end
 
--- Function to restore original properties of all players
-local function restorePlayersProperties()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Character and originalProperties[player] then
-            for _, part in pairs(player.Character:GetChildren()) do
-                if part:IsA("BasePart") and originalProperties[player][part] then
-                    -- Restore the original properties
-                    part.Color = originalProperties[player][part].Color
-                    part.Transparency = originalProperties[player][part].Transparency
-                    part.Material = originalProperties[player][part].Material
-                    part.LocalTransparencyModifier = originalProperties[player][part].LocalTransparencyModifier
-                end
-            end
-        end
-    end
-end
-
--- Function to handle chat commands
-local function onPlayerChat(message, player)
-    if message:lower() == ".enable" then
-        -- Turn all players red and adjust transparency to see through walls
-        turnPlayersVisibleThroughWalls()
-    elseif message:lower() == ".disable" then
-        -- Restore all players' original colors and properties
-        restorePlayersProperties()
-    end
-end
-
--- Bind to player chat
+-- Function to handle new players joining the game
 game.Players.PlayerAdded:Connect(function(player)
-    player.Chatted:Connect(function(message)
-        onPlayerChat(message, player)
+    player.CharacterAdded:Connect(function(character)
+        -- Wait for the character's head to load and show the username
+        local head = character:WaitForChild("Head", 10) -- Wait for the head to load
+        if head then
+            local billboardGui = head:FindFirstChildOfClass("BillboardGui")
+            if billboardGui then
+                billboardGui.MaxDistance = math.huge
+            end
+        end
     end)
 end)
 
--- For players already in the game (if script runs after players join)
+-- Apply the effect to players already in the game
 for _, player in pairs(game.Players:GetPlayers()) do
-    player.Chatted:Connect(function(message)
-        onPlayerChat(message, player)
-    end)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        local billboardGui = player.Character.Head:FindFirstChildOfClass("BillboardGui")
+        if billboardGui then
+            billboardGui.MaxDistance = math.huge
+        end
+    end
 end
 
-print("Wallhack toggle script loaded and fixed!")
+print("Player usernames are now visible from any distance!")
