@@ -1,10 +1,28 @@
--- GitHub Loadstring Script for "Get All Tools" Button (Searches for 'Tools' Folder and Other Locations)
+-- GitHub Loadstring Script for "Get All Tools" Button with Gamepass Bypass
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local starterPack = game:GetService("StarterPack")
 local lighting = game:GetService("Lighting")
 local serverStorage = game:GetService("ServerStorage")
+local marketPlaceService = game:GetService("MarketplaceService")
+
+-- Function to bypass gamepass checks
+local function bypassGamepassCheck()
+    -- Overriding the UserOwnsGamePassAsync to always return true
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+
+    local oldIndex = mt.__index
+    mt.__index = function(self, key)
+        if tostring(self) == "MarketplaceService" and key == "UserOwnsGamePassAsync" then
+            return function(_, playerId, gamePassId)
+                return true -- Always return true, tricking the game into thinking you own the gamepass
+            end
+        end
+        return oldIndex(self, key)
+    end
+end
 
 -- Create the "Get All Tools" button
 local function createGetAllToolsButton()
@@ -82,8 +100,9 @@ local function createGetAllToolsButton()
         end
     end
 
-    -- Connect the button click to the function to give all tools
+    -- Connect the button click to the function to give all tools and bypass gamepass check
     getAllToolsButton.MouseButton1Click:Connect(function()
+        bypassGamepassCheck()  -- Call the bypass function
         giveAllTools()
     end)
 end
