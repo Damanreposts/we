@@ -1,50 +1,26 @@
--- GitHub Loadstring Script for Mobile
+-- GitHub Loadstring Script for "Get All Tools" Button
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
--- Create the GUI
-local function createGui()
+-- Create the "Get All Tools" button
+local function createGetAllToolsButton()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player:WaitForChild("PlayerGui")
-    screenGui.Name = "ToolGui"
+    screenGui.Name = "GetAllToolsGui"
 
-    -- Create the Frame to hold everything (smaller size for mobile)
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 250, 0, 300)  -- Smaller frame size
-    mainFrame.Position = UDim2.new(0.5, -125, 0.5, -150)
-    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    mainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-    mainFrame.Parent = screenGui
-    mainFrame.BorderSizePixel = 0
+    -- Create the button
+    local getAllToolsButton = Instance.new("TextButton")
+    getAllToolsButton.Size = UDim2.new(0, 150, 0, 50)  -- Button size for mobile
+    getAllToolsButton.Position = UDim2.new(0.5, -75, 0.5, -25)  -- Centered on screen
+    getAllToolsButton.AnchorPoint = Vector2.new(0.5, 0.5)
+    getAllToolsButton.Text = "Get All Tools"
+    getAllToolsButton.TextColor3 = Color3.new(1, 1, 1)
+    getAllToolsButton.BackgroundColor3 = Color3.new(0, 1, 0)
+    getAllToolsButton.Parent = screenGui
 
-    -- Create the ScrollingFrame (for displaying tool buttons)
-    local scrollingFrame = Instance.new("ScrollingFrame")
-    scrollingFrame.Size = UDim2.new(1, 0, 0, 230)  -- Reduced size for mobile
-    scrollingFrame.Position = UDim2.new(0, 0, 0, 0)
-    scrollingFrame.Parent = mainFrame
-    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Update later when tools are added
-    scrollingFrame.ScrollBarThickness = 8 -- Mobile-friendly scrollbar
-
-    -- Create the Update Button (inside the main frame, at the bottom)
-    local updateButton = Instance.new("TextButton")
-    updateButton.Size = UDim2.new(0, 120, 0, 40)
-    updateButton.Position = UDim2.new(0.5, -60, 1, -45)
-    updateButton.AnchorPoint = Vector2.new(0.5, 1)
-    updateButton.Text = "Update"
-    updateButton.TextColor3 = Color3.new(1, 1, 1)
-    updateButton.BackgroundColor3 = Color3.new(0, 1, 0)
-    updateButton.Parent = mainFrame
-
-    -- Function to populate the ScrollingFrame with tool buttons
-    local function updateTools()
-        -- Clear existing buttons if any
-        for _, child in pairs(scrollingFrame:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-        
+    -- Function to give the player all the tools from ReplicatedStorage
+    local function giveAllTools()
         -- Fetch the tools from a folder in ReplicatedStorage called "Tools"
         local toolsFolder = replicatedStorage:FindFirstChild("Tools")
         if not toolsFolder then
@@ -52,35 +28,20 @@ local function createGui()
             return
         end
 
-        -- Create buttons for each tool
-        local yOffset = 0
+        -- Clone and give each tool to the player
         for _, tool in pairs(toolsFolder:GetChildren()) do
             if tool:IsA("Tool") then
-                local toolButton = Instance.new("TextButton")
-                toolButton.Size = UDim2.new(1, 0, 0, 40)  -- Smaller buttons for mobile
-                toolButton.Position = UDim2.new(0, 0, 0, yOffset)
-                toolButton.Text = tool.Name
-                toolButton.Parent = scrollingFrame
-
-                -- Click to give the player the tool
-                toolButton.MouseButton1Click:Connect(function()
-                    local clonedTool = tool:Clone()
-                    clonedTool.Parent = player.Backpack
-                end)
-
-                yOffset = yOffset + 40 -- Adjust Y offset for the next button
+                local clonedTool = tool:Clone()
+                clonedTool.Parent = player.Backpack
             end
         end
-
-        -- Update the canvas size for the scrolling frame
-        scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
     end
 
-    -- Connect Update button to populate the tools
-    updateButton.MouseButton1Click:Connect(function()
-        updateTools() -- Load or refresh tools whenever the button is clicked
+    -- Connect the button click to the function to give all tools
+    getAllToolsButton.MouseButton1Click:Connect(function()
+        giveAllTools()
     end)
 end
 
--- Initialize the GUI on script run
-createGui()
+-- Initialize the button on script run
+createGetAllToolsButton()
