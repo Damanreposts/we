@@ -1,8 +1,10 @@
--- GitHub Loadstring Script for "Get All Tools" Button with UI Corners and Bottom-left Position
+-- GitHub Loadstring Script for "Get All Tools" Button (Searches Everywhere)
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local starterPack = game:GetService("StarterPack")
+local lighting = game:GetService("Lighting")
+local serverStorage = game:GetService("ServerStorage")
 
 -- Create the "Get All Tools" button
 local function createGetAllToolsButton()
@@ -44,7 +46,17 @@ local function createGetAllToolsButton()
             giveTool(item)
         end
 
-        -- Search for tools in the player's backpack or character (in case any exist at the start)
+        -- Search for tools in Lighting (sometimes used for storage)
+        for _, item in pairs(lighting:GetDescendants()) do
+            giveTool(item)
+        end
+
+        -- Search for tools in ServerStorage (if accessible from the client)
+        for _, item in pairs(serverStorage:GetDescendants()) do
+            giveTool(item)
+        end
+
+        -- Search for tools in the player's Backpack or Character (in case any exist at the start)
         for _, item in pairs(player.Backpack:GetDescendants()) do
             giveTool(item)
         end
