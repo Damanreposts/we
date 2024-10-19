@@ -1,0 +1,63 @@
+-- Store the original colors of each player's character parts
+local originalColors = {}
+
+-- Function to turn all players' characters red (client-side only)
+local function turnPlayersRed()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            for _, part in pairs(player.Character:GetChildren()) do
+                if part:IsA("BasePart") then
+                    -- Save the original color if not already saved
+                    if not originalColors[player] then
+                        originalColors[player] = {}
+                    end
+                    originalColors[player][part] = part.Color
+
+                    -- Turn the character part red
+                    part.Color = Color3.new(1, 0, 0) -- Red color
+                end
+            end
+        end
+    end
+end
+
+-- Function to restore original colors of all players
+local function restorePlayersColors()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and originalColors[player] then
+            for _, part in pairs(player.Character:GetChildren()) do
+                if part:IsA("BasePart") and originalColors[player][part] then
+                    -- Restore the original color
+                    part.Color = originalColors[player][part]
+                end
+            end
+        end
+    end
+end
+
+-- Function to handle chat commands
+local function onPlayerChat(message, player)
+    if message:lower() == ".enable" then
+        -- Turn all players red
+        turnPlayersRed()
+    elseif message:lower() == ".disable" then
+        -- Restore all players' original colors
+        restorePlayersColors()
+    end
+end
+
+-- Bind to player chat
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        onPlayerChat(message, player)
+    end)
+end)
+
+-- For players already in the game (if script runs after players join)
+for _, player in pairs(game.Players:GetPlayers()) do
+    player.Chatted:Connect(function(message)
+        onPlayerChat(message, player)
+    end)
+end
+
+print("Admin color toggle script loaded!")
