@@ -1,34 +1,42 @@
--- Store the original colors of each player's character parts
-local originalColors = {}
+-- Store the original properties of each player's character parts
+local originalProperties = {}
 
--- Function to turn all players' characters red (client-side only)
-local function turnPlayersRed()
+-- Function to make all players visible through walls (turn red + transparent)
+local function turnPlayersVisibleThroughWalls()
     for _, player in pairs(game.Players:GetPlayers()) do
         if player.Character then
             for _, part in pairs(player.Character:GetChildren()) do
                 if part:IsA("BasePart") then
-                    -- Save the original color if not already saved
-                    if not originalColors[player] then
-                        originalColors[player] = {}
+                    -- Save original properties if not already saved
+                    if not originalProperties[player] then
+                        originalProperties[player] = {}
                     end
-                    originalColors[player][part] = part.Color
+                    originalProperties[player][part] = {
+                        Color = part.Color,
+                        Transparency = part.Transparency,
+                        Material = part.Material
+                    }
 
-                    -- Turn the character part red
-                    part.Color = Color3.new(1, 0, 0) -- Red color
+                    -- Change the properties to make them visible through walls
+                    part.Color = Color3.new(1, 0, 0)  -- Red color
+                    part.Transparency = 0.5  -- Semi-transparent
+                    part.Material = Enum.Material.ForceField  -- Makes it easier to spot
                 end
             end
         end
     end
 end
 
--- Function to restore original colors of all players
-local function restorePlayersColors()
+-- Function to restore original properties of all players
+local function restorePlayersProperties()
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Character and originalColors[player] then
+        if player.Character and originalProperties[player] then
             for _, part in pairs(player.Character:GetChildren()) do
-                if part:IsA("BasePart") and originalColors[player][part] then
-                    -- Restore the original color
-                    part.Color = originalColors[player][part]
+                if part:IsA("BasePart") and originalProperties[player][part] then
+                    -- Restore the original properties
+                    part.Color = originalProperties[player][part].Color
+                    part.Transparency = originalProperties[player][part].Transparency
+                    part.Material = originalProperties[player][part].Material
                 end
             end
         end
@@ -38,11 +46,11 @@ end
 -- Function to handle chat commands
 local function onPlayerChat(message, player)
     if message:lower() == ".enable" then
-        -- Turn all players red
-        turnPlayersRed()
+        -- Turn all players red and transparent to be visible through walls
+        turnPlayersVisibleThroughWalls()
     elseif message:lower() == ".disable" then
-        -- Restore all players' original colors
-        restorePlayersColors()
+        -- Restore all players' original colors and properties
+        restorePlayersProperties()
     end
 end
 
@@ -60,4 +68,4 @@ for _, player in pairs(game.Players:GetPlayers()) do
     end)
 end
 
-print("Admin color toggle script loaded!")
+print("Wallhack toggle script loaded!")
