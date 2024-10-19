@@ -1,44 +1,66 @@
-local function onChat(message, player)
-    local prefix = "."
+-- GitHub raw link to load the script from
+local githubLoadstringUrl = "https://raw.githubusercontent.com/yourusername/repository/main/script.lua"
 
-    -- Check if the message starts with the specified prefix
-    if string.sub(message, 1, 1) == prefix then
-        local args = string.sub(message, 2)  -- Remove the prefix
-        local command, arg1, arg2 = args:match("(%w+)%s*(%w*)%s*(.*)")
+-- Function to fetch and run the loadstring from GitHub
+local function fetchAndRunGitHubScript()
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(githubLoadstringUrl))()
+    end)
 
-        if command == "GetAdmin" then
-            -- Teleport to the 'pad' model
-            local pad = game.Workspace:FindFirstChild("pad")
-            if pad and pad:IsA("Model") then
-                player.Character:MoveTo(pad.PrimaryPart.Position)
+    if success then
+        print("Loaded!")
+    else
+        warn("Error loading script: " .. tostring(result))
+    end
+end
+
+-- Function to handle chat commands
+local function onPlayerChat(message, player)
+    -- Command: .GetAdmin
+    if message:lower() == ".getadmin" then
+        -- Search for a model named 'pad' in the workspace
+        local padModel = game.Workspace:FindFirstChild("pad")
+        if padModel then
+            -- Teleport the player to the 'pad'
+            player.Character:MoveTo(padModel.Position)
+        else
+            print("Error: 'pad' model not found!")
+        end
+    end
+
+    -- Command: .GiveAdmin Username
+    if message:lower():sub(1, 11) == ".giveadmin " then
+        -- Extract username from the message
+        local targetUsername = message:sub(12)
+        local targetPlayer = game.Players:FindFirstChild(targetUsername)
+
+        if targetPlayer then
+            -- Use the loadstring command to simulate bringing the player
+            local bringCommand = ";bring " .. targetUsername
+            local success, err = pcall(function()
+                loadstring("game:GetService('ReplicatedStorage').DefaultChatSystemChatEvents.SayMessageRequest:FireServer('" .. bringCommand .. "', 'All')")()
+            end)
+
+            if success then
+                print("Loaded!")
             else
-                print("Error: 'pad' model not found.")
+                warn("Error: " .. err)
             end
-
-        elseif command == "GiveAdmin" then
-            -- Assuming you want to execute a command like `;bring Username`
-            local username = arg1
-            if username then
-                local commandString = ';bring ' .. username
-                local success, err = pcall(function()
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/path/to/script.lua"))()
-                end)
-
-                if success then
-                    print("Loaded!")
-                else
-                    print("Error:", err)
-                end
-            else
-                print("Error: No username provided.")
-            end
+        else
+            print("Error: Player '" .. targetUsername .. "' not found!")
         end
     end
 end
 
--- Connect the function to the 'Chatted' event
+-- Bind to player chat
 game.Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(message)
-        onChat(message, player)
+        onPlayerChat(message, player)
     end)
 end)
+
+-- Fetch and run the GitHub script upon loading
+fetchAndRunGitHubScript()
+
+-- Print confirmation to the output
+print("Admin command script initialized.")
