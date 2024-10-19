@@ -3,12 +3,12 @@
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
--- Check if the GUI already exists; if not, create it in ReplicatedStorage
+-- Create the main GUI if it does not already exist
 local screenGui = replicatedStorage:FindFirstChild("ExecutorGui")
 if not screenGui then
     screenGui = Instance.new("ScreenGui")
     screenGui.Name = "ExecutorGui"
-    
+
     -- Create the main button to open/close the GUI
     local toggleButton = Instance.new("TextButton")
     toggleButton.Size = UDim2.new(0, 100, 0, 50)
@@ -123,8 +123,10 @@ if not screenGui then
         setclipboard(scriptTextbox.Text) -- Copy the text to clipboard
     end)
 
-    screenGui.Parent = replicatedStorage -- Store in ReplicatedStorage
+    -- Store the GUI in ReplicatedStorage
+    screenGui.Parent = replicatedStorage
 end
 
 -- Clone the GUI to the PlayerGui when the player joins or respawns
-screenGui:Clone().Parent = player:WaitForChild("PlayerGui")
+local playerGui = player:WaitForChild("PlayerGui")
+screenGui:Clone().Parent = playerGui
