@@ -1,0 +1,82 @@
+-- Loadstring Template for GitHub: Save this as a Lua file on GitHub and use the raw link with loadstring()
+
+local function createGui(player)
+    -- Create the ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.Name = "ToolGui"
+
+    -- Create the ScrollingFrame
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Size = UDim2.new(0, 300, 0, 200)
+    scrollingFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    scrollingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    scrollingFrame.Parent = screenGui
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Will be updated when tools are added
+
+    -- Create the Update Button
+    local updateButton = Instance.new("TextButton")
+    updateButton.Size = UDim2.new(0, 100, 0, 50)
+    updateButton.Position = UDim2.new(0.5, -50, 1, -60)
+    updateButton.AnchorPoint = Vector2.new(0.5, 0)
+    updateButton.Text = "Update"
+    updateButton.TextColor3 = Color3.new(1, 1, 1)
+    updateButton.BackgroundColor3 = Color3.new(0, 1, 0)
+    updateButton.Parent = screenGui
+
+    -- Function to update tools in the ScrollingFrame
+    local function updateTools()
+        -- Clear any previous buttons
+        for _, child in pairs(scrollingFrame:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+        
+        -- Assume all tools are stored in a folder called "Tools" in ReplicatedStorage
+        local toolsFolder = game.ReplicatedStorage:FindFirstChild("Tools")
+        if not toolsFolder then
+            warn("Tools folder not found in ReplicatedStorage")
+            return
+        end
+
+        -- Scan for tools and add buttons for each
+        local yOffset = 0
+        for _, tool in pairs(toolsFolder:GetChildren()) do
+            if tool:IsA("Tool") then
+                -- Create a button for each tool
+                local toolButton = Instance.new("TextButton")
+                toolButton.Size = UDim2.new(1, 0, 0, 50)
+                toolButton.Position = UDim2.new(0, 0, 0, yOffset)
+                toolButton.Text = tool.Name
+                toolButton.Parent = scrollingFrame
+
+                -- When clicked, give the player the tool
+                toolButton.MouseButton1Click:Connect(function()
+                    local clonedTool = tool:Clone()
+                    clonedTool.Parent = player.Backpack
+                end)
+
+                yOffset = yOffset + 50
+            end
+        end
+
+        -- Update the canvas size for scrolling
+        scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, yOffset)
+    end
+
+    -- Connect the Update Button to the function
+    updateButton.MouseButton1Click:Connect(function()
+        updateTools()
+        updateButton:Destroy() -- Remove the button after updating tools
+    end)
+end
+
+-- Main Script
+local Players = game:GetService("Players")
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        createGui(player)
+    end)
+end)
+
