@@ -1,0 +1,11 @@
+-- Infinite Zoom Script
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Set an extremely high CameraMaxZoomDistance for infinite zoom
+LocalPlayer.CameraMaxZoomDistance = math.huge
+
+-- Optional: Keep resetting the zoom to infinite in case Roblox tries to limit it
+game:GetService("RunService").RenderStepped:Connect(function()
+    LocalPlayer.CameraMaxZoomDistance = math.huge
+end)
