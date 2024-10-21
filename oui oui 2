@@ -1,0 +1,105 @@
+-- Services
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "PointsChangerGui"
+screenGui.ResetOnSpawn = false -- This will persist after death
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create a Frame for the GUI
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Position = UDim2.new(0.3, 0, 0.3, 0) -- Adjust as needed
+frame.Size = UDim2.new(0, 300, 0, 150)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 2
+frame.Active = true
+frame.Draggable = true -- Make the GUI draggable
+frame.Parent = screenGui
+
+-- Create a TextBox to enter points
+local textBox = Instance.new("TextBox")
+textBox.Name = "PointsTextBox"
+textBox.Size = UDim2.new(0, 280, 0, 40)
+textBox.Position = UDim2.new(0, 10, 0, 30)
+textBox.PlaceholderText = "Enter points"
+textBox.Font = Enum.Font.SourceSans
+textBox.Text = ""
+textBox.TextSize = 18
+textBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+textBox.Parent = frame
+
+-- Create a Button to submit points
+local button = Instance.new("TextButton")
+button.Name = "SubmitButton"
+button.Size = UDim2.new(0, 280, 0, 40)
+button.Position = UDim2.new(0, 10, 0, 80)
+button.Text = "Set Points"
+button.Font = Enum.Font.SourceSans
+button.TextSize = 18
+button.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.Parent = frame
+
+-- Create an exit button
+local exitButton = Instance.new("TextButton")
+exitButton.Name = "ExitButton"
+exitButton.Size = UDim2.new(0, 30, 0, 30)
+exitButton.Position = UDim2.new(1, -35, 0, 5)
+exitButton.Text = "X"
+exitButton.Font = Enum.Font.SourceSansBold
+exitButton.TextSize = 18
+exitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+exitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+exitButton.Parent = frame
+
+-- Function to detect the leaderboard and change the value
+local function changeLeaderboardPoints()
+    local player = Players.LocalPlayer
+    local leaderstats = player:FindFirstChild("leaderstats")
+    
+    if leaderstats then
+        local targetStat = nil
+        
+        -- Search for the desired stat (e.g. Minutes Played)
+        for _, stat in pairs(leaderstats:GetChildren()) do
+            if stat:IsA("IntValue") or stat:IsA("NumberValue") then
+                targetStat = stat -- You can filter or rename "Minutes Played" here
+                break
+            end
+        end
+        
+        -- Change the value of the found stat
+        if targetStat then
+            local points = tonumber(textBox.Text)
+            if points then
+                targetStat.Value = points
+                print("Changed " .. targetStat.Name .. " to " .. points)
+            else
+                print("Invalid points entered!")
+            end
+        else
+            print("No valid leaderboard stat found!")
+        end
+    else
+        print("No leaderstats found for this player!")
+    end
+end
+
+-- Connect the button to change points when clicked
+button.MouseButton1Click:Connect(changeLeaderboardPoints)
+
+-- Close the GUI when exit button is clicked
+exitButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Optional: Keep the GUI after death
+Players.LocalPlayer.CharacterAdded:Connect(function()
+    if not screenGui or not screenGui.Parent then
+        screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    end
+end)
