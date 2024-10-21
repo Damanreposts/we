@@ -24,7 +24,7 @@ local textBox = Instance.new("TextBox")
 textBox.Name = "PointsTextBox"
 textBox.Size = UDim2.new(0, 280, 0, 40)
 textBox.Position = UDim2.new(0, 10, 0, 30)
-textBox.PlaceholderText = "Enter points"
+textBox.PlaceholderText = "Enter minutes"
 textBox.Font = Enum.Font.SourceSans
 textBox.Text = ""
 textBox.TextSize = 18
@@ -37,7 +37,7 @@ local button = Instance.new("TextButton")
 button.Name = "SubmitButton"
 button.Size = UDim2.new(0, 280, 0, 40)
 button.Position = UDim2.new(0, 10, 0, 80)
-button.Text = "Set Points"
+button.Text = "Set Minutes"
 button.Font = Enum.Font.SourceSans
 button.TextSize = 18
 button.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
@@ -56,41 +56,32 @@ exitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 exitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 exitButton.Parent = frame
 
--- Function to detect the leaderboard and change the value
-local function changeLeaderboardPoints()
+-- Function to detect the leaderboard and change the "Minutes" value
+local function changeMinutesPoints()
     local player = Players.LocalPlayer
     local leaderstats = player:FindFirstChild("leaderstats")
     
     if leaderstats then
-        local targetStat = nil
+        local minutesStat = leaderstats:FindFirstChild("Minutes")
         
-        -- Search for the desired stat (e.g. Minutes Played)
-        for _, stat in pairs(leaderstats:GetChildren()) do
-            if stat:IsA("IntValue") or stat:IsA("NumberValue") then
-                targetStat = stat -- You can filter or rename "Minutes Played" here
-                break
-            end
-        end
-        
-        -- Change the value of the found stat
-        if targetStat then
+        if minutesStat and (minutesStat:IsA("IntValue") or minutesStat:IsA("NumberValue")) then
             local points = tonumber(textBox.Text)
             if points then
-                targetStat.Value = points
-                print("Changed " .. targetStat.Name .. " to " .. points)
+                minutesStat.Value = points
+                print("Changed Minutes to " .. points)
             else
-                print("Invalid points entered!")
+                print("Invalid minutes entered!")
             end
         else
-            print("No valid leaderboard stat found!")
+            print("Minutes stat not found!")
         end
     else
         print("No leaderstats found for this player!")
     end
 end
 
--- Connect the button to change points when clicked
-button.MouseButton1Click:Connect(changeLeaderboardPoints)
+-- Connect the button to change minutes when clicked
+button.MouseButton1Click:Connect(changeMinutesPoints)
 
 -- Close the GUI when exit button is clicked
 exitButton.MouseButton1Click:Connect(function()
