@@ -301,16 +301,13 @@ CloseButton.Position = UDim2.new(1, -55, 0, 5)
 UICornerCloseButton.CornerRadius = UDim.new(0, 12)
 UICornerCloseButton.Parent = CloseButton
 
+-- Close button functionality
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Make the Close Button's background color normal
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Solid red color
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text color
-
 -- Ensure all buttons are aligned and the GUI is clean
-for _, button in pairs(ScrollingFrame:GetChildren()) do
+for i, button in pairs(ScrollingFrame:GetChildren()) do
     if button:IsA("TextButton") then
         button.Size = UDim2.new(0, 250, 0, 50)
         button.Position = UDim2.new(0, 25, 0, button.Position.Y.Offset)
