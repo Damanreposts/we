@@ -84,7 +84,8 @@ WallHackButton.Parent = ScrollingFrame
 WallHackButton.Text = "Wall Hacks"
 WallHackButton.Size = UDim2.new(0, 250, 0, 50)
 WallHackButton.Position = UDim2.new(0, 25, 0, 10)
-WallHackButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
+WallHackButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+WallHackButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
 
 -- Add UICorner to WallHackButton
 local UICornerWallHack = UICornerButtons:Clone()
@@ -156,7 +157,8 @@ AimButton.Parent = ScrollingFrame
 AimButton.Text = "Aim Lock"
 AimButton.Size = UDim2.new(0, 250, 0, 50)
 AimButton.Position = UDim2.new(0, 25, 0, 70)
-AimButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
+AimButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+AimButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
 
 -- Add UICorner to AimButton
 local UICornerAim = UICornerButtons:Clone()
@@ -198,7 +200,8 @@ InfJumpButton.Parent = ScrollingFrame
 InfJumpButton.Text = "Infinite Jump"
 InfJumpButton.Size = UDim2.new(0, 250, 0, 50)
 InfJumpButton.Position = UDim2.new(0, 25, 0, 130)
-InfJumpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
+InfJumpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+InfJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
 
 -- Add UICorner to InfJumpButton
 local UICornerInfJump = UICornerButtons:Clone()
@@ -225,7 +228,8 @@ NameDistanceButton.Parent = ScrollingFrame
 NameDistanceButton.Text = "Show Name & Distance"
 NameDistanceButton.Size = UDim2.new(0, 250, 0, 50)
 NameDistanceButton.Position = UDim2.new(0, 25, 0, 190)
-NameDistanceButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
+NameDistanceButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+NameDistanceButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
 
 -- Add UICorner to NameDistanceButton
 local UICornerNameDistance = UICornerButtons:Clone()
@@ -289,7 +293,8 @@ NoClipButton.Parent = ScrollingFrame
 NoClipButton.Text = "NoClip"
 NoClipButton.Size = UDim2.new(0, 250, 0, 50)
 NoClipButton.Position = UDim2.new(0, 25, 0, 250)
-NoClipButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
+NoClipButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+NoClipButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
 
 -- Add UICorner to NoClipButton
 local UICornerNoClip = UICornerButtons:Clone()
@@ -328,7 +333,7 @@ ToggleButton.Parent = ScreenGui
 ToggleButton.Text = "O" -- Open the GUI
 ToggleButton.Size = UDim2.new(0, 50, 0, 50)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -25) -- Centered vertically on the left
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White text for visibility
 
 -- Add UICorner to ToggleButton
 local UICornerToggleButton = Instance.new("UICorner")
@@ -345,6 +350,7 @@ CloseButton.Parent = MainFrame
 CloseButton.Text = "X"
 CloseButton.Size = UDim2.new(0, 50, 0, 50)
 CloseButton.Position = UDim2.new(1, -55, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for close button
 
 -- Add UICorner to CloseButton
 UICornerCloseButton.CornerRadius = UDim.new(0, 12)
@@ -367,8 +373,8 @@ end
 
 -- Handle reset and respawn to keep the GUI and toggle button
 game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    -- Recreate the toggle button and main frame after respawn
-    MainFrame.Visible = true
+    wait(0.5) -- Wait for the character to fully load
+    MainFrame.Visible = true -- Show the GUI again
 end)
 
 -- Keep the GUI persistent
