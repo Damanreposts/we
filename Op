@@ -30,6 +30,44 @@ ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
 ScrollingFrame.Position = UDim2.new(0, 0, 0, 50)
 ScrollingFrame.CanvasSize = UDim2.new(0, 0, 4, 0)
 
+-- Make MainFrame draggable
+local dragToggle = nil
+local dragInput = nil
+local dragStart = nil
+local startPos = nil
+
+local function updateInput(input)
+	if dragToggle then
+		local delta = input.Position - dragStart
+		MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end
+
+MainFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragToggle = true
+		dragStart = input.Position
+		startPos = MainFrame.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragToggle = false
+			end
+		end)
+	end
+end)
+
+MainFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if input == dragInput and dragToggle then
+		updateInput(input)
+	end
+end)
+
 -- Helper function to apply rainbow effect to buttons
 local function rainbowEffect(button)
     spawn(function()
@@ -192,82 +230,3 @@ NameDistanceButton.MouseButton1Click:Connect(function()
                     local distanceLabel = Instance.new("TextLabel", billboard)
                     distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
                     distanceLabel.Position = UDim2.new(0, 0, 0.5, 0)
-                    distanceLabel.BackgroundTransparency = 1
-                    distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    distanceLabel.TextScaled = true
-
-                    game:GetService("RunService").RenderStepped:Connect(function()
-                        if nameDistanceEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                            local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-                            distanceLabel.Text = tostring(math.floor(distance)) .. " Studs"
-                        end
-                    end)
-                end
-            end
-        end
-    else
-        -- Remove all Billboards when deactivated
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Character and player.Character:FindFirstChild("Head") then
-                for _, child in pairs(player.Character.Head:GetChildren()) do
-                    if child:IsA("BillboardGui") then
-                        child:Destroy()
-                    end
-                end
-            end
-        end
-    end
-end)
-
--- NoClip Button
-NoClipButton.Parent = ScrollingFrame
-NoClipButton.Text = "NoClip"
-NoClipButton.Size = UDim2.new(0, 250, 0, 50)
-NoClipButton.Position = UDim2.new(0, 25, 0, 250)
-
--- Add UICorner to NoClipButton
-local UICornerNoClip = UICornerButtons:Clone()
-UICornerNoClip.Parent = NoClipButton
-
-rainbowEffect(NoClipButton)
-
-local noClipEnabled = false
-NoClipButton.MouseButton1Click:Connect(function()
-    noClipEnabled = not noClipEnabled
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if noClipEnabled then
-        -- Enable NoClip (allows player to walk through walls)
-        game:GetService("RunService").Stepped:Connect(function()
-            if noClipEnabled then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CanCollide == true then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end)
-    else
-        -- Disable NoClip (restore collision)
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and part.CanCollide == false then
-                part.CanCollide = true
-            end
-        end
-    end
-end)
-
--- Close Button
-CloseButton.Parent = MainFrame
-CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0, 40, 0, 40)
-CloseButton.Position = UDim2.new(1, -45, 0, 5)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-
--- Add UICorner to CloseButton (no rainbow effect)
-UICornerCloseButton.CornerRadius = UDim.new(0, 12)
-UICornerCloseButton.Parent = CloseButton
-
-CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
-end)
