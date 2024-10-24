@@ -225,7 +225,7 @@ end)
 
 -- Name & Distance Button
 NameDistanceButton.Parent = ScrollingFrame
-NameDistanceButton.Text = "Show Name & Distance"
+NameDistanceButton.Text = "Show Names & Distances"
 NameDistanceButton.Size = UDim2.new(0, 250, 0, 50)
 NameDistanceButton.Position = UDim2.new(0, 25, 0, 190)
 NameDistanceButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
@@ -333,7 +333,8 @@ ToggleButton.Parent = ScreenGui
 ToggleButton.Text = "O" -- Open the GUI
 ToggleButton.Size = UDim2.new(0, 50, 0, 50)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -25) -- Centered vertically on the left
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White text for visibility
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set background color to black
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text for visibility
 
 -- Add UICorner to ToggleButton
 local UICornerToggleButton = Instance.new("UICorner")
@@ -370,12 +371,6 @@ for i, button in pairs(ScrollingFrame:GetChildren()) do
         button.BackgroundTransparency = 0.3
     end
 end
-
--- Handle reset and respawn to keep the GUI and toggle button
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    wait(0.5) -- Wait for the character to fully load
-    MainFrame.Visible = true -- Show the GUI again
-end)
 
 -- Keep the GUI persistent
 MainFrame.Visible = true
