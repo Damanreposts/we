@@ -10,6 +10,7 @@ local InfJumpButton = Instance.new("TextButton")
 local NameDistanceButton = Instance.new("TextButton")
 local NoClipButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
+local ToggleButton = Instance.new("TextButton") -- Button to open/close the GUI
 local UICornerMainFrame = Instance.new("UICorner")
 local UICornerButtons = Instance.new("UICorner")
 local UICornerCloseButton = Instance.new("UICorner")
@@ -17,9 +18,10 @@ local UICornerCloseButton = Instance.new("UICorner")
 -- GUI Properties
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set background to black
 MainFrame.Size = UDim2.new(0, 300, 0, 500)
 MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
+MainFrame.Visible = false -- Start with the GUI hidden
 
 -- Add UICorner to MainFrame
 UICornerMainFrame.CornerRadius = UDim.new(0, 12)
@@ -74,6 +76,7 @@ local function makeDraggable(frame)
     end)
 end
 
+-- Initialize GUI
 makeDraggable(MainFrame) -- Make the main frame draggable
 
 -- Wall Hack Button
@@ -81,9 +84,9 @@ WallHackButton.Parent = ScrollingFrame
 WallHackButton.Text = "Wall Hacks"
 WallHackButton.Size = UDim2.new(0, 250, 0, 50)
 WallHackButton.Position = UDim2.new(0, 25, 0, 10)
+WallHackButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
 
 -- Add UICorner to WallHackButton
-UICornerButtons.CornerRadius = UDim.new(0, 12)
 local UICornerWallHack = UICornerButtons:Clone()
 UICornerWallHack.Parent = WallHackButton
 
@@ -105,6 +108,33 @@ WallHackButton.MouseButton1Click:Connect(function()
                 end
             end
         end
+        
+        -- Modify shooting logic to ignore walls
+        local function onWeaponFired(weapon, direction)
+            local origin = weapon.Position
+            local target = origin + (direction.Unit * 1000) -- Extend the ray far
+            local ray = Ray.new(origin, target - origin)
+            local hitPart, hitPos = game.Workspace:FindPartOnRay(ray, game.Players.LocalPlayer)
+
+            -- If we hit a player
+            if hitPart and hitPart:IsDescendantOf(game.Players) then
+                -- Logic to handle shooting
+                print("Hit player:", hitPart.Parent.Name)
+            end
+        end
+
+        -- Connect to a weapon firing event (adjust based on how your game handles shooting)
+        local player = game.Players.LocalPlayer
+        player.CharacterAdded:Wait() -- Ensure the character is loaded
+        local character = player.Character
+        local tool = character:FindFirstChildOfClass("Tool") -- Adjust based on your tool setup
+        
+        if tool then
+            tool.Activated:Connect(function()
+                onWeaponFired(tool.Handle, (tool.Handle.Position - character.HumanoidRootPart.Position).Unit)
+            end)
+        end
+        
     else
         -- Reset transparency and color
         for _, player in pairs(game.Players:GetPlayers()) do
@@ -126,6 +156,7 @@ AimButton.Parent = ScrollingFrame
 AimButton.Text = "Aim Lock"
 AimButton.Size = UDim2.new(0, 250, 0, 50)
 AimButton.Position = UDim2.new(0, 25, 0, 70)
+AimButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
 
 -- Add UICorner to AimButton
 local UICornerAim = UICornerButtons:Clone()
@@ -167,6 +198,7 @@ InfJumpButton.Parent = ScrollingFrame
 InfJumpButton.Text = "Infinite Jump"
 InfJumpButton.Size = UDim2.new(0, 250, 0, 50)
 InfJumpButton.Position = UDim2.new(0, 25, 0, 130)
+InfJumpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
 
 -- Add UICorner to InfJumpButton
 local UICornerInfJump = UICornerButtons:Clone()
@@ -193,6 +225,7 @@ NameDistanceButton.Parent = ScrollingFrame
 NameDistanceButton.Text = "Show Name & Distance"
 NameDistanceButton.Size = UDim2.new(0, 250, 0, 50)
 NameDistanceButton.Position = UDim2.new(0, 25, 0, 190)
+NameDistanceButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
 
 -- Add UICorner to NameDistanceButton
 local UICornerNameDistance = UICornerButtons:Clone()
@@ -204,39 +237,37 @@ local nameDistanceEnabled = false
 NameDistanceButton.MouseButton1Click:Connect(function()
     nameDistanceEnabled = not nameDistanceEnabled
     if nameDistanceEnabled then
-        -- Display name and distance above players' heads
+        -- Show names and distances above players
         for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer and player.Character then
-                local head = player.Character:FindFirstChild("Head")
-                if head then
-                    local billboard = Instance.new("BillboardGui")
-                    billboard.Adornee = head
-                    billboard.Size = UDim2.new(0, 200, 0, 50)
-                    billboard.StudsOffset = Vector3.new(0, 2, 0)
-                    billboard.AlwaysOnTop = true
-                    billboard.Parent = head
+            if player.Character and player.Character:FindFirstChild("Head") then
+                local billboard = Instance.new("BillboardGui")
+                billboard.Adornee = player.Character.Head
+                billboard.Size = UDim2.new(0, 100, 0, 50)
+                billboard.StudsOffset = Vector3.new(0, 3, 0)
 
-                    local nameLabel = Instance.new("TextLabel", billboard)
-                    nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
-                    nameLabel.Text = player.Name
-                    nameLabel.BackgroundTransparency = 1
-                    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    nameLabel.TextScaled = true
+                local nameLabel = Instance.new("TextLabel")
+                nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
+                nameLabel.BackgroundTransparency = 1
+                nameLabel.Text = player.Name
+                nameLabel.TextColor3 = Color3.new(1, 1, 1)
+                nameLabel.Parent = billboard
 
-                    local distanceLabel = Instance.new("TextLabel", billboard)
-                    distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
-                    distanceLabel.Position = UDim2.new(0, 0, 0.5, 0)
-                    distanceLabel.BackgroundTransparency = 1
-                    distanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    distanceLabel.TextScaled = true
+                local distanceLabel = Instance.new("TextLabel")
+                distanceLabel.Size = UDim2.new(1, 0, 0.5, 0)
+                distanceLabel.Position = UDim2.new(0, 0, 0.5, 0)
+                distanceLabel.BackgroundTransparency = 1
+                distanceLabel.TextColor3 = Color3.new(1, 1, 1)
+                distanceLabel.Parent = billboard
 
-                    game:GetService("RunService").RenderStepped:Connect(function()
-                        if nameDistanceEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                            local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-                            distanceLabel.Text = tostring(math.floor(distance)) .. " Studs"
-                        end
-                    end)
-                end
+                billboard.Parent = player.Character.Head
+
+                -- Update distance in real-time
+                game:GetService("RunService").RenderStepped:Connect(function()
+                    if nameDistanceEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        local distance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+                        distanceLabel.Text = tostring(math.floor(distance)) .. " Studs"
+                    end
+                end)
             end
         end
     else
@@ -258,6 +289,7 @@ NoClipButton.Parent = ScrollingFrame
 NoClipButton.Text = "NoClip"
 NoClipButton.Size = UDim2.new(0, 250, 0, 50)
 NoClipButton.Position = UDim2.new(0, 25, 0, 250)
+NoClipButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker button color for visibility
 
 -- Add UICorner to NoClipButton
 local UICornerNoClip = UICornerButtons:Clone()
@@ -273,7 +305,7 @@ NoClipButton.MouseButton1Click:Connect(function()
     if noClipEnabled then
         -- Enable NoClip (allows player to walk through walls)
         game:GetService("RunService").Stepped:Connect(function()
-            if noClipEnabled then
+            if noClipEnabled and character then
                 for _, part in pairs(character:GetDescendants()) do
                     if part:IsA("BasePart") then
                         part.CanCollide = false
@@ -291,6 +323,23 @@ NoClipButton.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Toggle Button
+ToggleButton.Parent = ScreenGui
+ToggleButton.Text = "O" -- Open the GUI
+ToggleButton.Size = UDim2.new(0, 50, 0, 50)
+ToggleButton.Position = UDim2.new(0, 10, 0.5, -25) -- Centered vertically on the left
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+-- Add UICorner to ToggleButton
+local UICornerToggleButton = Instance.new("UICorner")
+UICornerToggleButton.CornerRadius = UDim.new(0, 12)
+UICornerToggleButton.Parent = ToggleButton
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+    ToggleButton.Text = MainFrame.Visible and "C" or "O" -- Change text based on visibility
+end)
+
 -- Close Button
 CloseButton.Parent = MainFrame
 CloseButton.Text = "X"
@@ -303,7 +352,8 @@ UICornerCloseButton.Parent = CloseButton
 
 -- Close button functionality
 CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
+    MainFrame.Visible = false
+    ToggleButton.Text = "O" -- Reset toggle button to 'Open' state
 end)
 
 -- Ensure all buttons are aligned and the GUI is clean
@@ -314,3 +364,12 @@ for i, button in pairs(ScrollingFrame:GetChildren()) do
         button.BackgroundTransparency = 0.3
     end
 end
+
+-- Handle reset and respawn to keep the GUI and toggle button
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    -- Recreate the toggle button and main frame after respawn
+    MainFrame.Visible = true
+end)
+
+-- Keep the GUI persistent
+MainFrame.Visible = true
