@@ -11,6 +11,7 @@ local NameDistanceButton = Instance.new("TextButton")
 local NoClipButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
 local ToggleButton = Instance.new("TextButton") -- Button to open/close the GUI
+local ShootThroughWallsButton = Instance.new("TextButton") -- New button for shooting through walls
 local UICornerMainFrame = Instance.new("UICorner")
 local UICornerButtons = Instance.new("UICorner")
 local UICornerCloseButton = Instance.new("UICorner")
@@ -30,7 +31,7 @@ UICornerMainFrame.Parent = MainFrame
 ScrollingFrame.Parent = MainFrame
 ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
 ScrollingFrame.Position = UDim2.new(0, 0, 0, 50)
-ScrollingFrame.CanvasSize = UDim2.new(0, 0, 4, 0)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 5, 0) -- Increased canvas size for more buttons
 ScrollingFrame.ScrollBarThickness = 10
 
 -- Helper function to apply rainbow effect to buttons
@@ -109,33 +110,6 @@ WallHackButton.MouseButton1Click:Connect(function()
                 end
             end
         end
-        
-        -- Modify shooting logic to ignore walls
-        local function onWeaponFired(weapon, direction)
-            local origin = weapon.Position
-            local target = origin + (direction.Unit * 1000) -- Extend the ray far
-            local ray = Ray.new(origin, target - origin)
-            local hitPart, hitPos = game.Workspace:FindPartOnRay(ray, game.Players.LocalPlayer)
-
-            -- If we hit a player
-            if hitPart and hitPart:IsDescendantOf(game.Players) then
-                -- Logic to handle shooting
-                print("Hit player:", hitPart.Parent.Name)
-            end
-        end
-
-        -- Connect to a weapon firing event (adjust based on how your game handles shooting)
-        local player = game.Players.LocalPlayer
-        player.CharacterAdded:Wait() -- Ensure the character is loaded
-        local character = player.Character
-        local tool = character:FindFirstChildOfClass("Tool") -- Adjust based on your tool setup
-        
-        if tool then
-            tool.Activated:Connect(function()
-                onWeaponFired(tool.Handle, (tool.Handle.Position - character.HumanoidRootPart.Position).Unit)
-            end)
-        end
-        
     else
         -- Reset transparency and color
         for _, player in pairs(game.Players:GetPlayers()) do
@@ -325,6 +299,33 @@ NoClipButton.MouseButton1Click:Connect(function()
                 part.CanCollide = true
             end
         end
+    end
+end)
+
+-- Shoot Through Walls Button
+ShootThroughWallsButton.Parent = ScrollingFrame
+ShootThroughWallsButton.Text = "Shoot Through Walls"
+ShootThroughWallsButton.Size = UDim2.new(0, 250, 0, 50)
+ShootThroughWallsButton.Position = UDim2.new(0, 25, 0, 310)
+ShootThroughWallsButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Set button color to black
+ShootThroughWallsButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+
+-- Add UICorner to ShootThroughWallsButton
+local UICornerShootThroughWalls = UICornerButtons:Clone()
+UICornerShootThroughWalls.Parent = ShootThroughWallsButton
+
+rainbowEffect(ShootThroughWallsButton)
+
+local shootThroughWallsEnabled = false
+ShootThroughWallsButton.MouseButton1Click:Connect(function()
+    shootThroughWallsEnabled = not shootThroughWallsEnabled
+    if shootThroughWallsEnabled then
+        -- Code to enable shooting through walls
+        print("Shooting through walls enabled")
+        -- Add your shooting logic here
+    else
+        print("Shooting through walls disabled")
+        -- Add logic to revert shooting through walls
     end
 end)
 
