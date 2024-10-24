@@ -8,6 +8,9 @@ local WallHackButton = Instance.new("TextButton")
 local AimButton = Instance.new("TextButton")
 local InfJumpButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
+local UICornerMainFrame = Instance.new("UICorner")
+local UICornerButtons = Instance.new("UICorner")
+local UICornerCloseButton = Instance.new("UICorner")
 
 -- GUI Properties
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -15,6 +18,10 @@ MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 MainFrame.Size = UDim2.new(0, 300, 0, 400)
 MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
+
+-- Add UICorner to MainFrame
+UICornerMainFrame.CornerRadius = UDim.new(0, 12)
+UICornerMainFrame.Parent = MainFrame
 
 ScrollingFrame.Parent = MainFrame
 ScrollingFrame.Size = UDim2.new(1, 0, 1, -50)
@@ -38,6 +45,12 @@ WallHackButton.Parent = ScrollingFrame
 WallHackButton.Text = "Wall Hacks"
 WallHackButton.Size = UDim2.new(0, 250, 0, 50)
 WallHackButton.Position = UDim2.new(0, 25, 0, 10)
+
+-- Add UICorner to WallHackButton
+UICornerButtons.CornerRadius = UDim.new(0, 12)
+local UICornerWallHack = UICornerButtons:Clone()
+UICornerWallHack.Parent = WallHackButton
+
 rainbowEffect(WallHackButton)
 
 local wallHackEnabled = false
@@ -81,6 +94,11 @@ AimButton.Parent = ScrollingFrame
 AimButton.Text = "Aim Lock"
 AimButton.Size = UDim2.new(0, 250, 0, 50)
 AimButton.Position = UDim2.new(0, 25, 0, 70)
+
+-- Add UICorner to AimButton
+local UICornerAim = UICornerButtons:Clone()
+UICornerAim.Parent = AimButton
+
 rainbowEffect(AimButton)
 
 local aimLockEnabled = false
@@ -124,6 +142,11 @@ InfJumpButton.Parent = ScrollingFrame
 InfJumpButton.Text = "Infinite Jump"
 InfJumpButton.Size = UDim2.new(0, 250, 0, 50)
 InfJumpButton.Position = UDim2.new(0, 25, 0, 130)
+
+-- Add UICorner to InfJumpButton
+local UICornerInfJump = UICornerButtons:Clone()
+UICornerInfJump.Parent = InfJumpButton
+
 rainbowEffect(InfJumpButton)
 
 local infJumpEnabled = false
@@ -143,9 +166,13 @@ end)
 -- Close Button
 CloseButton.Parent = MainFrame
 CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0, 50, 0, 50)
-CloseButton.Position = UDim2.new(1, -55, 0, 0)
-rainbowEffect(CloseButton)
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+-- Add UICorner to CloseButton
+UICornerCloseButton.CornerRadius = UDim.new(0, 12)
+UICornerCloseButton.Parent = CloseButton
 
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui.Enabled = false
