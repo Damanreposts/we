@@ -1,0 +1,74 @@
+-- Script: bringPlayerGui.lua
+
+-- Create the ScreenGui and Frame
+local screenGui = Instance.new("ScreenGui")
+local frame = Instance.new("Frame")
+local textBox = Instance.new("TextBox")
+local bringButton = Instance.new("TextButton")
+local creditLabel = Instance.new("TextLabel")
+
+screenGui.Name = "BringPlayerGUI"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Frame settings
+frame.Name = "RainbowFrame"
+frame.Parent = screenGui
+frame.Size = UDim2.new(0.2, 0, 0.15, 0)
+frame.Position = UDim2.new(0.4, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Rainbow background effect
+local function updateRainbow()
+    while frame do
+        for i = 0, 1, 0.01 do
+            frame.BackgroundColor3 = Color3.fromHSV(i, 1, 1)
+            wait(0.05)
+        end
+    end
+end
+spawn(updateRainbow)
+
+-- TextBox for username input
+textBox.Name = "UsernameBox"
+textBox.Parent = frame
+textBox.Size = UDim2.new(0.9, 0, 0.4, 0)
+textBox.Position = UDim2.new(0.05, 0, 0.1, 0)
+textBox.PlaceholderText = "Enter username to bring"
+textBox.Text = ""
+textBox.TextScaled = true
+textBox.BackgroundTransparency = 0.3
+textBox.BackgroundColor3 = Color3.new(1, 1, 1)
+textBox.TextColor3 = Color3.new(0, 0, 0)
+
+-- Bring Button
+bringButton.Name = "BringButton"
+bringButton.Parent = frame
+bringButton.Size = UDim2.new(0.9, 0, 0.3, 0)
+bringButton.Position = UDim2.new(0.05, 0, 0.6, 0)
+bringButton.Text = "Bring Player"
+bringButton.TextScaled = true
+bringButton.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+bringButton.TextColor3 = Color3.new(1, 1, 1)
+
+-- Credits Label
+creditLabel.Name = "Credits"
+creditLabel.Parent = screenGui
+creditLabel.Size = UDim2.new(0.15, 0, 0.05, 0)
+creditLabel.Position = UDim2.new(0.85, 0, 0.95, 0)
+creditLabel.Text = "Made by NeneHana5 v1"
+creditLabel.TextScaled = true
+creditLabel.BackgroundTransparency = 1
+creditLabel.TextColor3 = Color3.new(1, 1, 1)
+
+-- Bring player functionality
+bringButton.MouseButton1Click:Connect(function()
+    local playerName = textBox.Text
+    local targetPlayer = game.Players:FindFirstChild(playerName)
+    if targetPlayer and targetPlayer.Character then
+        -- Teleport the target player's character to the local player's position
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character then
+            targetPlayer.Character:SetPrimaryPartCFrame(localPlayer.Character.PrimaryPart.CFrame + Vector3.new(2, 0, 0))
+        end
+    end
+end)
