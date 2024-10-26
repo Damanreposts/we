@@ -5,6 +5,7 @@ local screenGui = Instance.new("ScreenGui")
 local frame = Instance.new("Frame")
 local textBox = Instance.new("TextBox")
 local bringButton = Instance.new("TextButton")
+local closeButton = Instance.new("TextButton")
 local creditLabel = Instance.new("TextLabel")
 
 screenGui.Name = "BringPlayerGUI"
@@ -16,6 +17,8 @@ frame.Parent = screenGui
 frame.Size = UDim2.new(0.2, 0, 0.15, 0)
 frame.Position = UDim2.new(0.4, 0, 0.4, 0)
 frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.Active = true
+frame.Draggable = true  -- Makes the GUI draggable
 
 -- Rainbow background effect
 local function updateRainbow()
@@ -59,6 +62,21 @@ creditLabel.Text = "Made by NeneHana5 v1"
 creditLabel.TextScaled = true
 creditLabel.BackgroundTransparency = 1
 creditLabel.TextColor3 = Color3.new(1, 1, 1)
+
+-- Close Button
+closeButton.Name = "CloseButton"
+closeButton.Parent = frame
+closeButton.Size = UDim2.new(0.15, 0, 0.2, 0)
+closeButton.Position = UDim2.new(0.85, 0, 0, 0)
+closeButton.Text = "X"
+closeButton.TextScaled = true
+closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+
+-- Functionality to close the GUI
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
 
 -- Bring player functionality
 bringButton.MouseButton1Click:Connect(function()
